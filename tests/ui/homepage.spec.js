@@ -74,10 +74,11 @@ test.describe('Ministry of Testing public UI smoke tests', () => {
       if (name === 'Insights') {
         await expect(page).toHaveURL(/\/insights\/?(?:\?[^#]*)?(?:#.*)?$/);
       } else {
-        await expect(page).toHaveURL((url) =>
-          url.pathname === expectedPath.pathname &&
-          [...expectedPath.searchParams].every(([key, value]) => url.searchParams.get(key) === value)
+        const expectedUrl = new URL(
+          `${expectedPath.pathname}${expectedPath.search}`,
+          process.env.BASE_URL || 'https://www.ministryoftesting.com'
         );
+        await expect(page).toHaveURL(expectedUrl.href);
       }
 
       await expect(page.getByRole('main')).toBeVisible();

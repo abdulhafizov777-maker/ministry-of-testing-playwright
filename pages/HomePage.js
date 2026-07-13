@@ -10,7 +10,7 @@ class HomePage {
   }
 
   async open() {
-    const response = await this.page.goto('/', { waitUntil: 'commit' });
+    const response = await this.page.goto('/', { waitUntil: 'domcontentloaded' });
     expect(response, 'Homepage navigation should return a response').not.toBeNull();
     expect(response.status(), 'Homepage should open successfully').toBeLessThan(400);
   }
