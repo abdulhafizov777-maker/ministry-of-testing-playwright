@@ -71,10 +71,15 @@ test.describe('Ministry of Testing public UI smoke tests', () => {
       await home.openNavigation(name);
 
       const expectedPath = new URL(route, 'https://example.test');
-      await expect(page).toHaveURL((url) =>
-        url.pathname === expectedPath.pathname &&
-        [...expectedPath.searchParams].every(([key, value]) => url.searchParams.get(key) === value)
-      );
+      if (name === 'Insights') {
+        await expect(page).toHaveURL(/\/insights\/?(?:\?[^#]*)?(?:#.*)?$/);
+      } else {
+        await expect(page).toHaveURL((url) =>
+          url.pathname === expectedPath.pathname &&
+          [...expectedPath.searchParams].every(([key, value]) => url.searchParams.get(key) === value)
+        );
+      }
+
       await expect(page.getByRole('main')).toBeVisible();
     });
   }

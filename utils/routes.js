@@ -1,7 +1,7 @@
 const PUBLIC_ROUTES = Object.freeze({
   Learn: '/learn',
   Events: '/events',
-  Insights: '/trends',
+  Insights: '/insights',
   Certs: '/certifications',
   Observatory: '/observatory',
   Moments: '/moments',
