@@ -152,10 +152,22 @@ test.describe('Ministry of Testing public UI smoke tests', () => {
     for (const [name, observedRoute] of Object.entries(PUBLIC_ROUTES)) {
       const href = await home.navigationLink(name).getAttribute('href');
       expect(href, `${name} should have an href`).toBeTruthy();
-      expect(new URL(href, page.url()).pathname).toBe(new URL(observedRoute, page.url()).pathname);
+      const hrefPathname = new URL(href, page.url()).pathname;
+      const canonicalPathname = new URL(observedRoute, page.url()).pathname;
+
+      if (name === 'Insights') {
+        expect(['/insights', '/trends']).toContain(hrefPathname);
+      } else {
+        expect(hrefPathname).toBe(canonicalPathname);
+      }
 
       const response = await request.get(href);
       expect(response.status(), `${name} returned ${response.status()}`).toBeLessThan(400);
+
+      if (name === 'Insights') {
+        const finalPathname = new URL(response.url()).pathname.replace(/\/+$/, '') || '/';
+        expect(finalPathname, 'Insights should resolve to its canonical route').toBe('/insights');
+      }
     }
   });
 });
