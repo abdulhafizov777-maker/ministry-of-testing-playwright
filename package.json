@@ -1,0 +1,18 @@
+{
+  "name": "ministry-of-testing-playwright",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Public, non-destructive Playwright smoke tests for Ministry of Testing",
+  "scripts": {
+    "test": "playwright test",
+    "test:ui": "playwright test tests/ui",
+    "test:api": "playwright test tests/api",
+    "test:headed": "playwright test tests/ui --headed",
+    "test:debug": "playwright test tests/ui --debug",
+    "report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.54.1",
+    "dotenv": "^17.2.0"
+  }
+}

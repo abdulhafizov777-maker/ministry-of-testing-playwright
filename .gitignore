@@ -1,0 +1,17 @@
+node_modules/
+.env
+.env.local
+test-results/
+playwright-report/
+blob-report/
+trace-first-test/
+playwright/.cache/
+trace*.zip
+*.trace
+playwright-debug.log
+debug.log
+pw-*.log
+tmp/
+.tmp/
+*.log
+.DS_Store
