@@ -14,8 +14,9 @@ module.exports = defineConfig({
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 1 : 0,
   reporter: [
-    ['list'],
+    ['line'],
     ['html', { outputFolder: 'playwright-report', open: 'never' }],
+    ['allure-playwright', { resultsDir: 'allure-results' }],
   ],
   use: {
     baseURL: process.env.BASE_URL || 'https://www.ministryoftesting.com',

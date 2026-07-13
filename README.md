@@ -71,10 +71,27 @@ npm run test:ui       # UI smoke tests only
 npm run test:api      # public GET checks only
 npm run test:headed   # UI tests with a visible browser
 npm run test:debug    # UI tests in Playwright debug mode
+npm run test:allure   # run all tests and write Allure results
 npm run report        # open the latest HTML report
 ```
 
-The configuration deliberately fixes `workers: 1` to limit traffic to the public website. HTML and list reporters are enabled. Screenshots are saved only for failures; videos and traces are retained only when a test fails. Failure artifacts are written under `test-results/`, and the report is written to `playwright-report/`.
+The configuration deliberately fixes `workers: 1` to limit traffic to the public website. Line, HTML, and Allure reporters are enabled. Screenshots are saved only for failures; videos and traces are retained only when a test fails. Failure artifacts are written under `test-results/`, the Playwright report is written to `playwright-report/`, and raw Allure results are written to `allure-results/`.
+
+## Allure reports
+
+Run the tests and generate the local Allure HTML report:
+
+```bash
+npm run test:allure
+npm run allure:generate
+npm run allure:open
+```
+
+`allure:generate` replaces `allure-report/` with a report built from `allure-results/`. Both generated directories are gitignored.
+
+On every push to `main`, and when started manually, the GitHub Actions workflow runs the full Playwright suite, generates Allure even when tests fail, and deploys the report with GitHub Pages. The published report URL is:
+
+https://abdulhafizov777-maker.github.io/ministry-of-testing-playwright/
 
 ### Optional network bridge
 
