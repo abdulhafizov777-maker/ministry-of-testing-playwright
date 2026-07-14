@@ -1,4 +1,4 @@
-const { test, expect } = require('@playwright/test');
+const { test, expect } = require('../support/test-fixtures');
 const { PUBLIC_ROUTES } = require('../../utils/routes');
 
 test.describe('public HTTP GET checks', () => {

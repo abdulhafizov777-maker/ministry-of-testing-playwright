@@ -1,4 +1,4 @@
-const { test, expect } = require('@playwright/test');
+const { test, expect } = require('../support/test-fixtures');
 const { PRIMARY_ROUTES, fetchSnapshot } = require('../support/site-fixtures');
 
 const query = 'utm_source=playwright&utm_medium=read_only&mot_probe=500';

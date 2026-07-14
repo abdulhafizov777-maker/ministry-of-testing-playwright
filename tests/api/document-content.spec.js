@@ -1,4 +1,4 @@
-const { test, expect } = require('@playwright/test');
+const { test, expect } = require('../support/test-fixtures');
 const { SITE_ROUTES, fetchSnapshot } = require('../support/site-fixtures');
 
 test.describe('server-rendered document content contracts', () => {

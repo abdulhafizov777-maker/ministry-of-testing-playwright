@@ -1,4 +1,4 @@
-const { test, expect } = require('@playwright/test');
+const { test, expect } = require('../support/test-fixtures');
 const { HomePage } = require('../../pages/HomePage');
 const { PUBLIC_ROUTES } = require('../../utils/routes');
 const { installReadOnlyNetworkBridge } = require('../../utils/networkBridge');
@@ -72,7 +72,13 @@ test.describe('Ministry of Testing public UI smoke tests', () => {
       const home = new HomePage(page);
       await home.open();
 
-      await home.openNavigation(name);
+      if (name === 'Insights') {
+        const link = home.navigationLink(name);
+        await expect(link).toBeVisible();
+        await link.click({ noWaitAfter: true });
+      } else {
+        await home.openNavigation(name);
+      }
 
       const expectedPath = new URL(route, 'https://example.test');
       if (name === 'Insights') {
