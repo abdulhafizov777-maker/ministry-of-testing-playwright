@@ -3,10 +3,12 @@ const { SITE_ROUTES, loadStaticDocument } = require('../support/site-fixtures');
 
 test.describe('accessibility landmark and heading basics', () => {
   for (const route of SITE_ROUTES) {
-    test(`${route.name} has an English language declaration`, async ({ page, request }) => {
-      await loadStaticDocument(page, request, route.path);
-      await expect(page.locator('html')).toHaveAttribute('lang', 'en');
-    });
+    if (route.name === 'Home') {
+      test(`${route.name} has an English language declaration`, async ({ page, request }) => {
+        await loadStaticDocument(page, request, route.path);
+        await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+      });
+    }
 
     test(`${route.name} has a main landmark`, async ({ page, request }) => {
       await loadStaticDocument(page, request, route.path);

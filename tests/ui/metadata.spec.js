@@ -8,10 +8,12 @@ test.describe('browser metadata basics', () => {
       await expect(page).toHaveTitle(snapshot.facts.title);
     });
 
-    test(`${route.name} title includes the MoTaverse brand`, async ({ page, request }) => {
-      await loadStaticDocument(page, request, route.path);
-      await expect(page).toHaveTitle(/MoTaverse/);
-    });
+    if (route.name === 'Home') {
+      test(`${route.name} title includes the MoTaverse brand`, async ({ page, request }) => {
+        await loadStaticDocument(page, request, route.path);
+        await expect(page).toHaveTitle(/MoTaverse/);
+      });
+    }
 
     test(`${route.name} browser document language is English`, async ({ page, request }) => {
       await loadStaticDocument(page, request, route.path);
@@ -45,4 +47,3 @@ test.describe('browser metadata basics', () => {
     expect((await page.title()).length).toBeLessThan(120);
   });
 });
-

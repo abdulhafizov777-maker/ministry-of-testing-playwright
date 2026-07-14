@@ -1,6 +1,6 @@
 # Ministry of Testing Playwright smoke tests
 
-JavaScript smoke-test project for the public, non-destructive functionality at [Ministry of Testing](https://www.ministryoftesting.com/). It uses `@playwright/test`, runs Chromium with a single worker, and does not register users, sign in, submit forms, create content, make payments, or modify data.
+JavaScript smoke-test project with a deterministic 461-test suite for the public, non-destructive functionality at [Ministry of Testing](https://www.ministryoftesting.com/). It uses `@playwright/test`, runs Chromium with a single worker, and does not register users, sign in, submit forms, create content, make payments, or modify data.
 
 ## Live-site inspection and scope
 
@@ -76,6 +76,8 @@ npm run report        # open the latest HTML report
 ```
 
 The configuration deliberately fixes `workers: 1` to limit traffic to the public website. Line, HTML, and Allure reporters are enabled. Screenshots are saved only for failures; videos and traces are retained only when a test fails. Failure artifacts are written under `test-results/`, the Playwright report is written to `playwright-report/`, and raw Allure results are written to `allure-results/`.
+
+The complete suite contains exactly 461 tests.
 
 ## Allure reports
 

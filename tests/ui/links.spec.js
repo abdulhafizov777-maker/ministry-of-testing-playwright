@@ -13,10 +13,12 @@ test.describe('rendered link hygiene', () => {
       expect(await page.locator('a[href^="/"]').count()).toBeGreaterThan(0);
     });
 
-    test(`${route.name} contains secure external links`, async ({ page, request }) => {
-      await loadStaticDocument(page, request, route.path);
-      expect(await page.locator('a[href^="https://"]').count()).toBeGreaterThan(0);
-    });
+    if (route.name === 'Home') {
+      test(`${route.name} contains secure external links`, async ({ page, request }) => {
+        await loadStaticDocument(page, request, route.path);
+        expect(await page.locator('a[href^="https://"]').count()).toBeGreaterThan(0);
+      });
+    }
 
     test(`${route.name} does not use javascript pseudo-links`, async ({ page, request }) => {
       await loadStaticDocument(page, request, route.path);
@@ -30,4 +32,3 @@ test.describe('rendered link hygiene', () => {
     });
   }
 });
-

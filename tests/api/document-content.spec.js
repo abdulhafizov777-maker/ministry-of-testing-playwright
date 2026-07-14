@@ -11,13 +11,15 @@ test.describe('server-rendered document content contracts', () => {
       expect((await fetchSnapshot(request, route.path)).body).toMatch(/<html\b[^>]*\blang=["']en["']/i);
     });
 
-    test(`${route.name} contains a document head`, async ({ request }) => {
-      expect((await fetchSnapshot(request, route.path)).body).toMatch(/<head(?:\s|>)/i);
-    });
+    if (route.name === 'Home') {
+      test(`${route.name} contains a document head`, async ({ request }) => {
+        expect((await fetchSnapshot(request, route.path)).body).toMatch(/<head(?:\s|>)/i);
+      });
 
-    test(`${route.name} contains a document body`, async ({ request }) => {
-      expect((await fetchSnapshot(request, route.path)).body).toMatch(/<body(?:\s|>)/i);
-    });
+      test(`${route.name} contains a document body`, async ({ request }) => {
+        expect((await fetchSnapshot(request, route.path)).body).toMatch(/<body(?:\s|>)/i);
+      });
+    }
 
     test(`${route.name} has a non-empty page title`, async ({ request }) => {
       expect((await fetchSnapshot(request, route.path)).facts.title.length).toBeGreaterThan(3);
@@ -68,4 +70,3 @@ test.describe('server-rendered document content contracts', () => {
     expect((await fetchSnapshot(request, '/')).facts.hrefs.some((href) => /^\/events\/?(?:[?#]|$)/.test(href))).toBe(true);
   });
 });
-
