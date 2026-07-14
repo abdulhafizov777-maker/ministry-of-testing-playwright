@@ -2,6 +2,7 @@ const { test, expect } = require('@playwright/test');
 const { HomePage } = require('../../pages/HomePage');
 const { PUBLIC_ROUTES } = require('../../utils/routes');
 const { installReadOnlyNetworkBridge } = require('../../utils/networkBridge');
+const { loadStaticDocument } = require('../support/site-fixtures');
 
 const cachedDocuments = new Map();
 const useNetworkBridge = /^(1|true)$/i.test(process.env.USE_NETWORK_BRIDGE || '');
@@ -45,15 +46,17 @@ test.beforeEach(async ({ page }) => {
 });
 
 test.describe('Ministry of Testing public UI smoke tests', () => {
-  test('homepage opens successfully and has a relevant title', async ({ page }) => {
+  test('homepage opens successfully and has a relevant title', async ({ page, request }) => {
+    const snapshot = await loadStaticDocument(page, request, '/');
     const home = new HomePage(page);
-    await home.open();
 
+    expect(snapshot.status, 'Homepage should open successfully').toBeLessThan(400);
     await expect(page).toHaveTitle(/Ministry of Testing|MoTaverse/i);
     await expect(home.main).toBeVisible();
   });
 
   test('main header, navigation, and expected navigation items are visible', async ({ page }) => {
+    await installReadOnlyNetworkBridge(page);
     const home = new HomePage(page);
     await home.open();
     await home.expectShellVisible();
@@ -65,6 +68,7 @@ test.describe('Ministry of Testing public UI smoke tests', () => {
 
   for (const [name, route] of Object.entries(PUBLIC_ROUTES)) {
     test(`${name} navigation opens the observed public route and shows main content`, async ({ page }) => {
+      await installReadOnlyNetworkBridge(page);
       const home = new HomePage(page);
       await home.open();
 
@@ -86,6 +90,7 @@ test.describe('Ministry of Testing public UI smoke tests', () => {
   }
 
   test('search control is visible and opens the search interface', async ({ page }) => {
+    await installReadOnlyNetworkBridge(page);
     const home = new HomePage(page);
     await home.open();
     await home.openSearch();
@@ -96,6 +101,7 @@ test.describe('Ministry of Testing public UI smoke tests', () => {
   });
 
   test('an event card opens its public event detail page', async ({ page }) => {
+    await installReadOnlyNetworkBridge(page);
     await page.goto('/events', { waitUntil: 'domcontentloaded' });
     const eventLink = page.getByRole('main').getByRole('link', { name: 'MoTaCon 2026', exact: true }).first();
 
@@ -107,6 +113,7 @@ test.describe('Ministry of Testing public UI smoke tests', () => {
   });
 
   test('an insight card opens its public insight detail page', async ({ page }) => {
+    await installReadOnlyNetworkBridge(page);
     await page.goto('/trends', { waitUntil: 'domcontentloaded' });
     const main = page.getByRole('main');
     const links = main.getByRole('link');
@@ -133,12 +140,14 @@ test.describe('Ministry of Testing public UI smoke tests', () => {
   });
 
   test('Join page opens without starting registration', async ({ page }) => {
+    await installReadOnlyNetworkBridge(page);
     await page.goto('/membership', { waitUntil: 'domcontentloaded' });
     await expect(page).toHaveURL(/\/membership\/?$/);
     await expect(page.getByRole('main')).toBeVisible();
   });
 
   test('Sign In page opens without submitting credentials', async ({ page }) => {
+    await installReadOnlyNetworkBridge(page);
     await page.goto('/signin?return_to_referer=yes', { waitUntil: 'domcontentloaded' });
     await expect(page).toHaveURL(/\/signin(?:\?|$)/);
     await expect(page.getByRole('main')).toBeVisible();
@@ -147,14 +156,14 @@ test.describe('Ministry of Testing public UI smoke tests', () => {
   });
 
   test('main navigation links do not return HTTP error responses', async ({ page, request }) => {
+    const snapshot = await loadStaticDocument(page, request, '/');
     const home = new HomePage(page);
-    await home.open();
 
     for (const [name, observedRoute] of Object.entries(PUBLIC_ROUTES)) {
       const href = await home.navigationLink(name).getAttribute('href');
       expect(href, `${name} should have an href`).toBeTruthy();
-      const hrefPathname = new URL(href, page.url()).pathname;
-      const canonicalPathname = new URL(observedRoute, page.url()).pathname;
+      const hrefPathname = new URL(href, snapshot.url).pathname;
+      const canonicalPathname = new URL(observedRoute, snapshot.url).pathname;
 
       if (name === 'Insights') {
         expect(['/insights', '/trends']).toContain(hrefPathname);
@@ -162,11 +171,13 @@ test.describe('Ministry of Testing public UI smoke tests', () => {
         expect(hrefPathname).toBe(canonicalPathname);
       }
 
-      const response = await request.get(href);
+      const response = await request.get(href, {
+        maxRedirects: name === 'Insights' ? 0 : undefined,
+      });
       expect(response.status(), `${name} returned ${response.status()}`).toBeLessThan(400);
 
       if (name === 'Insights') {
-        const finalPathname = new URL(response.url()).pathname.replace(/\/+$/, '') || '/';
+        const finalPathname = new URL(response.headers().location).pathname.replace(/\/+$/, '') || '/';
         expect(finalPathname, 'Insights should resolve to its canonical route').toBe('/insights');
       }
     }
@@ -174,6 +185,7 @@ test.describe('Ministry of Testing public UI smoke tests', () => {
 });
 
 test('mobile viewport: homepage header and main content are usable', async ({ page }) => {
+  await installReadOnlyNetworkBridge(page);
   await page.setViewportSize({ width: 390, height: 844 });
   const home = new HomePage(page);
   await home.open();

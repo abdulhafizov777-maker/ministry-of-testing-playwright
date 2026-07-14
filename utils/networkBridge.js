@@ -16,8 +16,12 @@ async function installReadOnlyNetworkBridge(page, cachedDocuments = new Map()) {
       return;
     }
 
-    if (request.resourceType() !== 'document') {
-      await route.abort('blockedbyclient');
+    if (url.pathname === '/trends' && request.resourceType() === 'document') {
+      await route.fulfill({
+        status: 302,
+        headers: { location: `${baseOrigin}/insights` },
+        body: '',
+      });
       return;
     }
 
@@ -32,7 +36,15 @@ async function installReadOnlyNetworkBridge(page, cachedDocuments = new Map()) {
         failOnStatusCode: false,
         timeout: 12_000,
       });
-      await route.fulfill({ response });
+      if (response.url() !== request.url()) {
+        await route.fulfill({
+          status: 302,
+          headers: { location: response.url() },
+          body: '',
+        });
+      } else {
+        await route.fulfill({ response });
+      }
     } catch {
       await route.abort('timedout');
     }
