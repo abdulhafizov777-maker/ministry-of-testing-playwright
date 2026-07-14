@@ -36,7 +36,8 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Verify exact test count
-        run: npx playwright test --list --reporter=line | grep -Eq '^Total: 461 tests in [0-9]+ files$'
+        run: |
+          npx playwright test --list --reporter=line | grep -Eq '^Total: 461 tests in [0-9]+ files$'
 
       - name: Run Playwright tests
         id: tests
